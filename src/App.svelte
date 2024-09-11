@@ -1,12 +1,13 @@
 <script>
-  import svelteLogo from "./assets/svelte.svg";
-  import viteLogo from "/vite.svg";
-  import Counter from "./lib/Counter.svelte";
+  import { onMount } from "svelte";
 
+  // Variablen deklarieren
   let todos = [];
-
   let newTodo = "";
+  let editingIndex = null;
+  let editingText = "";
 
+<<<<<<< Updated upstream
   let editingIndex = null;
 
   let editingText = "";
@@ -24,6 +25,118 @@
 
   function saveTodos() {
     localStorage.setItem("todos", JSON.stringify(todos));
+=======
+  // TODOS holen
+  async function fetchTodos() {
+    const res = await fetch("http://localhost:3000/todos"); // API-Endpunkt des Express-Servers
+    todos = await res.json();
+  }
+
+  onMount(fetchTodos);
+
+  // TODO hinzufügen
+  async function addTodo() {
+    if (newTodo.trim() === "") return;
+
+    const response = await fetch("http://localhost:3000/todos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: newTodo, done: false }),
+    });
+
+    const newTodoItem = await response.json();
+
+    todos = [...todos, newTodoItem];
+    newTodo = "";
+  }
+
+  // TODO löschen
+  async function deleteTodo(index) {
+    const todo = todos[index];
+
+    try {
+      const response = await fetch(`http://localhost:3000/todos/${todo.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error: ${text}`);
+      }
+
+      todos = todos.filter((_, i) => i !== index);
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+    }
+  }
+
+  // TODO Edit init ==> in Bearbeitung ansicht schalten
+  function editTodoinit(index) {
+    editingIndex = index;
+    editingText = todos[index].text;
+  }
+
+  // TODO Edit Cance ==> Bearbeitung Ansicht ausschalten
+  function cancelEdit() {
+    editingIndex = null;
+    editingText = "";
+  }
+
+  // TODO Aktualisierter Text speichern
+  async function editTodoSafe() {
+    if (editingText.trim() === "") return;
+
+    const todo = todos[editingIndex];
+    try {
+      const response = await fetch(
+        `http://localhost:3000/todos/${todo.id}/text`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: editingText }),
+        },
+      );
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error: ${text}`);
+      }
+
+      todos[editingIndex].text = editingText;
+
+      editingIndex = null;
+      editingText = "";
+    } catch (error) {
+      console.error("Failed to edit todo:", error);
+    }
+  }
+
+  // TODO Done Status aktualisieren
+  async function toggleTodoDone(index) {
+    const todo = todos[index];
+    try {
+      const response = await fetch(`http://localhost:3000/todos/${todo.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: todo.text, done: !todo.done }),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Error: ${text}`);
+      }
+
+      todos[index].done = !todo.done;
+    } catch (error) {
+      console.error("Failed to toggle todo status:", error);
+    }
+>>>>>>> Stashed changes
   }
 
   function editTodoinit(index) {
