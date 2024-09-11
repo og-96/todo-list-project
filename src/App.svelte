@@ -7,25 +7,6 @@
   let editingIndex = null;
   let editingText = "";
 
-<<<<<<< Updated upstream
-  let editingIndex = null;
-
-  let editingText = "";
-
-  function addTodo() {
-    if (newTodo.trim() === "") return;
-    todos = [...todos, { text: newTodo, done: false }];
-    newTodo = "";
-  }
-
-  function deleteTodo(index) {
-    todos = todos.filter((_, i) => i !== index);
-    saveTodos();
-  }
-
-  function saveTodos() {
-    localStorage.setItem("todos", JSON.stringify(todos));
-=======
   // TODOS holen
   async function fetchTodos() {
     const res = await fetch("http://localhost:3000/todos"); // API-Endpunkt des Express-Servers
@@ -136,30 +117,6 @@
     } catch (error) {
       console.error("Failed to toggle todo status:", error);
     }
->>>>>>> Stashed changes
-  }
-
-  function editTodoinit(index) {
-    editingIndex = index;
-    editingText = todos[index].text;
-  }
-
-  function cancelEdit() {
-    editingIndex = null;
-    editingText = "";
-  }
-
-  function editTodoSafe() {
-    if (editingText.trim() === "") return;
-    todos[editingIndex].text = editingText;
-    editingIndex = null;
-    editingText = "";
-    saveTodos();
-  }
-
-  function toggleTodoDone(index) {
-    todos[index].done = !todos[index].done;
-    saveTodos();
   }
 </script>
 
