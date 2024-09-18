@@ -1,65 +1,59 @@
 <script>
   import { onMount } from "svelte";
+  import {
+    fetchTodos,
+    addTodoApi,
+    deleteTodoApi,
+    updateTodoApi,
+  } from "./api.js";
 
-  // Variablen deklarieren
   let todos = [];
   let newTodo = "";
   let editingIndex = null;
   let editingText = "";
 
   // TODOS holen
-  async function fetchTodos() {
-    const res = await fetch("http://localhost:3000/todos"); // API-Endpunkt des Express-Servers
-    todos = await res.json();
+  async function loadTodos() {
+    try {
+      todos = await fetchTodos();
+    } catch (error) {
+      console.error("Failed to load todos:", error);
+    }
   }
 
-  onMount(fetchTodos);
+  onMount(loadTodos);
 
   // TODO hinzufügen
   async function addTodo() {
     if (newTodo.trim() === "") return;
 
-    const response = await fetch("http://localhost:3000/todos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text: newTodo, done: false }),
-    });
-
-    const newTodoItem = await response.json();
-
-    todos = [...todos, newTodoItem];
-    newTodo = "";
+    try {
+      const newTodoItem = await addTodoApi(newTodo);
+      todos = [...todos, newTodoItem];
+      newTodo = "";
+    } catch (error) {
+      console.error("Failed to add todo:", error);
+    }
   }
 
   // TODO löschen
   async function deleteTodo(index) {
     const todo = todos[index];
-
     try {
-      const response = await fetch(`http://localhost:3000/todos/${todo.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Error: ${text}`);
-      }
-
+      await deleteTodoApi(todo.id);
       todos = todos.filter((_, i) => i !== index);
     } catch (error) {
       console.error("Failed to delete todo:", error);
     }
   }
 
-  // TODO Edit init ==> in Bearbeitung ansicht schalten
+  // TODO Edit init ==> in Bearbeitung Ansicht schalten
   function editTodoinit(index) {
     editingIndex = index;
     editingText = todos[index].text;
   }
 
-  // TODO Edit Cance ==> Bearbeitung Ansicht ausschalten
+  // TODO Edit Cancel ==> Bearbeitung Ansicht ausschalten
   function cancelEdit() {
     editingIndex = null;
     editingText = "";
@@ -71,24 +65,8 @@
 
     const todo = todos[editingIndex];
     try {
-      const response = await fetch(
-        `http://localhost:3000/todos/${todo.id}/text`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ text: editingText }),
-        },
-      );
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Error: ${text}`);
-      }
-
+      await updateTodoApi(todo.id, { text: editingText, done: todo.done });
       todos[editingIndex].text = editingText;
-
       editingIndex = null;
       editingText = "";
     } catch (error) {
@@ -100,19 +78,7 @@
   async function toggleTodoDone(index) {
     const todo = todos[index];
     try {
-      const response = await fetch(`http://localhost:3000/todos/${todo.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: todo.text, done: !todo.done }),
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Error: ${text}`);
-      }
-
+      await updateTodoApi(todo.id, { text: todo.text, done: !todo.done });
       todos[index].done = !todo.done;
     } catch (error) {
       console.error("Failed to toggle todo status:", error);

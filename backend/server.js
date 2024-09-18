@@ -51,27 +51,7 @@ app.post('/todos', async (req, res) => {
 // TODO done aktualisieren
 app.put('/todos/:id', async (req, res) => {
     const { id } = req.params;
-    const { done } = req.body;
-    let conn;
-    try {
-        conn = await pool.getConnection();
-
-        // Konvertiere die ID in BigInt, falls nötig
-        const bigIntId = BigInt(id);
-
-        await conn.query('UPDATE todos SET done = ? WHERE id = ?', [done, bigIntId]);
-        res.send('To-Do aktualisiert');
-    } catch (err) {
-        res.status(500).send(err.toString());
-    } finally {
-        if (conn) conn.release();
-    }
-});
-
-// TODO Text aktualisieren
-app.put('/todos/:id/text', async (req, res) => {
-    const { id } = req.params;
-    const { text } = req.body;
+    const { text, done } = req.body;
 
     if (!text || text.trim() === "") {
         return res.status(400).json({ error: "Text cannot be empty" });
@@ -79,20 +59,19 @@ app.put('/todos/:id/text', async (req, res) => {
 
     let conn;
     try {
-
-        // Konvertiere die ID in BigInt, falls nötig
+        conn = await pool.getConnection();
         const bigIntId = BigInt(id);
 
-        conn = await pool.getConnection();
-        const result = await conn.query('UPDATE todos SET text = ? WHERE id = ?', [text, bigIntId]);
+        const result = await conn.query('UPDATE todos SET text = ?, done = ? WHERE id = ?', [text, done, bigIntId]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: "Todo not found" });
         }
 
-        res.json({ message: "Todo text updated successfully", id: id.toString(), text });
+        // Rückgabe einer JSON-Antwort statt eines einfachen Texts
+        res.json({ message: "Todo updated successfully", id: id.toString(), text, done });
     } catch (err) {
-        res.status(500).send(err.toString());
+        res.status(500).json({ error: err.toString() });
     } finally {
         if (conn) conn.release();
     }
