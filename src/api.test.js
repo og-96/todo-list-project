@@ -1,5 +1,5 @@
 const nock = require('nock');
-const { fetchTodos, addTodoApi, deleteTodoApi, updateTodoApi } = require('./api');
+const { fetchTodos, addTodoApi, deleteTodoApi, updateTodoApi } = require('./api.cjs.js');
 
 const API_URL = 'http://localhost:3000/todos';
 
