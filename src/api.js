@@ -1,7 +1,9 @@
+const fetch = require('node-fetch');
+
 const API_URL = "http://localhost:3000/todos";
 
 // TODOS holen
-export async function fetchTodos() {
+async function fetchTodos() {
     const res = await fetch(API_URL);
     if (!res.ok) {
         throw new Error("Failed to fetch todos");
@@ -10,7 +12,7 @@ export async function fetchTodos() {
 }
 
 // TODO hinzufügen
-export async function addTodoApi(newTodo) {
+async function addTodoApi(newTodo) {
     const res = await fetch(API_URL, {
         method: "POST",
         headers: {
@@ -26,7 +28,7 @@ export async function addTodoApi(newTodo) {
 }
 
 // TODO löschen
-export async function deleteTodoApi(id) {
+async function deleteTodoApi(id) {
     const res = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
     });
@@ -37,7 +39,7 @@ export async function deleteTodoApi(id) {
 }
 
 // TODO aktualisieren
-export async function updateTodoApi(id, updatedTodo) {
+async function updateTodoApi(id, updatedTodo) {
     const res = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: {
@@ -51,3 +53,10 @@ export async function updateTodoApi(id, updatedTodo) {
     }
     return await res.json();
 }
+
+module.exports = {
+    fetchTodos,
+    addTodoApi,
+    deleteTodoApi,
+    updateTodoApi,
+};
