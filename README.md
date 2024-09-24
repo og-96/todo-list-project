@@ -4,16 +4,15 @@ Project Title: To-do-List
  
 -------------------
  
-**Description:* The To-Do List Application is a simple, full-stack web application that allows users to manage tasks in an organized manner. It consists of a Svelte frontend and an Express.js backend with a MariaDB database for persistent data storage. The application is designed to provide an intuitive interface where users can create, update, mark as completed, and delete to-do items.
+**Description:* The To-Do List Application is a simple, full-stack web application that allows users to manage tasks in an organized list. It consists of a Svelte frontend and an Express.js backend with a MariaDB database for persistent data storage. The application is designed to provide an intuitive interface where users can create, update, mark as completed, and delete to-do items.
  
-Key Features:
 Add To-Do Items: Users can quickly add tasks to their to-do list by typing into a text field and clicking "Add".
-Mark as Completed: Each task can be marked as completed by clicking the checkbox next to it, with a visual indicator (strikethrough) showing it is done.
+Mark as Completed: Each task can be marked as completed by clicking the checkbox next to it, to see it is done.
 Edit Tasks: Users can edit the text of existing tasks to update details or correct mistakes.
 Delete Tasks: Unwanted or completed tasks can be removed from the list entirely by clicking the delete button.
-Persistent Storage: All tasks are saved in a MariaDB database, ensuring data persistence across sessions.
-Technical Overview:
-Frontend: Built with Svelte, the frontend provides a lightweight and reactive user interface. It communicates with the backend via RESTful API requests to manage to-do items.
+Persistent Storage: All tasks are saved in a MariaDB database.
+
+Frontend: Built with Svelte, the frontend provides a lightweight and reactive user interface. It communicates with the backend to manage to-do items.
 Backend: Powered by Express.js, the backend handles API requests to interact with the database. It supports creating, reading, updating, and deleting (CRUD) tasks.
 Database: The application uses MariaDB for storing the tasks persistently. Each to-do item is saved with details such as its text, completion status, and unique ID.
  
@@ -70,8 +69,6 @@ npm (Node Package Manager): Used to install and manage all necessary dependencie
  
 node-fetch: A package used in the backend to handle HTTP requests.
  
-CORS (Cross-Origin Resource Sharing): A middleware package for Express.js used to allow requests from the frontend to the backend, even if they run on different hosts.
- 
 Jest: A testing framework for Node.js used to test the API endpoints and ensure the backend logic works correctly.
  
 -------------------
@@ -81,7 +78,6 @@ Jest: A testing framework for Node.js used to test the API endpoints and ensure 
 Backend (Express.js)
 Database Connection: The backend has been configured to connect to a MariaDB database. The connection parameters, such as the database host, user, password, and database name, are managed through environment variables.
 Server Port: The backend server runs on port 3000, which is set via environment variables to ensure flexibility for different environments.
-CORS: Cross-Origin Resource Sharing (CORS) has been enabled on the server to allow the frontend (running on a different port) to make API requests to the backend.
  
 Frontend (Svelte)
 API Base URL: The frontend is configured to interact with the backend through the API URL, which points to http://localhost:3000. This allows the frontend to communicate with the Express.js backend for managing the to-do list data.
