@@ -87,18 +87,18 @@
 </script>
 
 <header>
-  <h1>To Do List</h1>
+  <h1>To-Do List</h1>
 </header>
 
 <div class="container">
   <div class="input-group">
-    <input
-      type="text"
+    <textarea
       name="todo"
       id="todoInput"
       placeholder="Add new Todo"
       bind:value={newTodo}
-    />
+      rows="1"
+    ></textarea>
     <button on:click={addTodo}>Add</button>
   </div>
 
@@ -107,8 +107,8 @@
       <li>
         {#if editingIndex === index}
           <div class="edit-group">
-            <input type="text" bind:value={editingText} />
-            <button on:click={editTodoSafe}>Safe</button>
+            <textarea bind:value={editingText} rows="1"></textarea>
+            <button on:click={editTodoSafe}>Save</button>
             <button on:click={cancelEdit}>Cancel</button>
           </div>
         {:else}
@@ -118,15 +118,21 @@
               checked={todo.done}
               on:change={() => toggleTodoDone(index)}
             />
-            <span class:done={todo.done}>{todo.text}</span>
-          </div>
-          <div class="action-buttons">
-            <button class="edit-button" on:click={() => editTodoinit(index)}
-              >Edit</button
-            >
-            <button class="delete-button" on:click={() => deleteTodo(index)}
-              >Delete</button
-            >
+            <textarea
+              class="todo-text"
+              class:done={todo.done}
+              readonly
+              rows="1"
+              bind:value={todo.text}
+            ></textarea>
+            <div class="action-buttons">
+              <button class="edit-button" on:click={() => editTodoinit(index)}
+                >Edit</button
+              >
+              <button class="delete-button" on:click={() => deleteTodo(index)}
+                >Delete</button
+              >
+            </div>
           </div>
         {/if}
       </li>
@@ -135,106 +141,135 @@
 </div>
 
 <style>
-  /* Header Styles */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+
   header {
-    background-color: #6200ee;
+    background-color: #4a90e2;
     color: white;
     padding: 20px;
     text-align: center;
     border-radius: 8px 8px 0 0;
   }
 
-  /* Container Styles */
   .container {
-    max-width: 600px;
+    max-width: 800px;
     margin: 20px auto;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  /* Input and Button Styles */
   .input-group {
     display: flex;
+    gap: 20px;
     margin-bottom: 20px;
+    align-items: flex-start;
   }
 
-  input[type="text"] {
+  textarea {
     flex: 1;
-    padding: 10px;
+    padding: 12px;
     border-radius: 4px;
     border: 1px solid #ccc;
-    margin-right: 10px;
+    font-size: 16px;
+    min-height: 40px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow: visible;
   }
 
   button {
-    padding: 10px 20px;
-    background-color: #6200ee;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #4a90e2;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s;
   }
 
   button:hover {
-    background-color: #3700b3;
+    background-color: #357ab8;
   }
 
-  /* List Styles */
   ul {
     list-style-type: none;
     padding: 0;
   }
 
   li {
-    padding: 10px;
+    padding: 16px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: white;
+    border-radius: 6px;
+    background-color: #f3f4f6;
+    transition: transform 0.2s;
+    font-size: 16px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
   }
 
-  .done {
-    text-decoration: line-through;
-    color: gray;
+  li:hover {
+    transform: scale(1.02);
   }
 
   .todo-item {
     display: flex;
     align-items: center;
-    color: black;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
   }
 
-  .todo-item input[type="checkbox"] {
-    margin-right: 10px;
+  .todo-text {
+    flex: 1;
+    min-height: 60px;
+    color: black;
+    background-color: transparent;
+    border: none;
+    resize: none;
+    overflow: visible;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .todo-text.done {
+    text-decoration: line-through;
+    color: gray;
   }
 
   .edit-group {
     display: flex;
-    align-items: center;
+    gap: 10px;
+    align-items: flex-start;
   }
 
-  .edit-group input[type="text"] {
-    margin-right: 10px;
-    padding: 8px;
+  .edit-group textarea {
+    padding: 10px;
     border-radius: 4px;
     border: 1px solid #ccc;
+    font-size: 16px;
+    resize: none;
+    min-height: 40px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
 
-  .edit-group button {
-    margin-left: 5px;
-  }
-
-  /* Button Styles for Actions */
-  .action-buttons button {
-    margin-left: 10px;
-    padding: 5px 10px;
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
   }
 
   .edit-button {
@@ -251,5 +286,52 @@
 
   .delete-button:hover {
     background-color: #d32f2f;
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      padding: 15px;
+    }
+
+    .input-group {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .edit-group {
+      flex-direction: column;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    textarea {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1000px;
+      padding: 30px;
+    }
+
+    textarea,
+    button {
+      padding: 14px;
+      font-size: 18px;
+    }
+
+    li {
+      padding: 18px;
+      font-size: 16px;
+    }
   }
 </style>
